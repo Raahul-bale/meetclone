@@ -37,6 +37,27 @@ class StatusCheck(BaseModel):
 class StatusCheckCreate(BaseModel):
     client_name: str
 
+class MeetingCreate(BaseModel):
+    host_name: str
+    meeting_title: Optional[str] = "Quick Meeting"
+
+class MeetingJoin(BaseModel):
+    meeting_id: str
+    participant_name: str
+
+class Meeting(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    meeting_id: str
+    host_name: str
+    meeting_title: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    participants: List[str] = []
+    is_active: bool = True
+
+# Store active connections and meetings
+active_connections: Dict[str, Dict[str, WebSocket]] = {}
+active_meetings: Dict[str, Meeting] = {}
+
 # Add your routes to the router instead of directly to app
 @api_router.get("/")
 async def root():
